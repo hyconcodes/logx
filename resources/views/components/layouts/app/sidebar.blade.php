@@ -28,13 +28,22 @@
                     wire:navigate>{{ __('Dashboard') }}</flux:navlist.item>
             </flux:navlist.group>
 
-            @can('role.view')
+            @role('superadmin')
                 <flux:navlist.group :heading="__('Administration')" class="grid">
                     <flux:navlist.item icon="user-group" :href="route('admin.roles')"
                         :current="request()->routeIs('admin.roles')" wire:navigate>{{ __('Role Management') }}
                     </flux:navlist.item>
+                    <flux:navlist.item icon="users" :href="route('admin.accounts')"
+                        :current="request()->routeIs('admin.accounts')" wire:navigate>{{ __('Account Management') }}
+                    </flux:navlist.item>
+                    <flux:navlist.item icon="academic-cap" :href="route('admin.supervisors')"
+                        :current="request()->routeIs('admin.supervisors')" wire:navigate>{{ __('Supervisor Management') }}
+                    </flux:navlist.item>
+                    <flux:navlist.item icon="building-office" :href="route('admin.departments')"
+                        :current="request()->routeIs('admin.departments')" wire:navigate>{{ __('Department Management') }}
+                    </flux:navlist.item>
                 </flux:navlist.group>
-            @endcan
+            @endrole
         </flux:navlist>
 
         <flux:spacer />

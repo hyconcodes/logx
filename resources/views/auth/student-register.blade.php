@@ -35,6 +35,21 @@
                 :error="$errors->first('email')"
             />
 
+            <!-- Department Selection -->
+            <flux:select
+                name="department_id"
+                :label="__('Department')"
+                required
+                :error="$errors->first('department_id')"
+            >
+                <option value="">{{ __('Select your department') }}</option>
+                @foreach($departments as $department)
+                    <option value="{{ $department->id }}" {{ old('department_id') == $department->id ? 'selected' : '' }}>
+                        {{ $department->name }}
+                    </option>
+                @endforeach
+            </flux:select>
+
             <!-- Password -->
             <flux:input
                 name="password"

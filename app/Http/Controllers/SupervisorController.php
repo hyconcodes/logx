@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Department;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -27,7 +28,8 @@ class SupervisorController extends Controller
             }
         }
 
-        return view('auth.supervisor-register');
+        $departments = Department::active()->orderBy('name')->get();
+        return view('auth.supervisor-register', compact('departments'));
     }
 
     /**
@@ -58,6 +60,7 @@ class SupervisorController extends Controller
                 'regex:/^[a-zA-Z]+\.[a-zA-Z]+@bouesti\.edu\.ng$/'
             ],
             'password' => ['required', 'confirmed', Password::defaults()],
+            'department_id' => ['required', 'exists:departments,id'],
         ]);
 
         if ($validator->fails()) {
@@ -68,6 +71,7 @@ class SupervisorController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'department_id' => $request->department_id,
         ]);
 
         // Assign supervisor role

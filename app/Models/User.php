@@ -26,6 +26,9 @@ class User extends Authenticatable
         'password',
         'matric_no',
         'avatar',
+        'status',
+        'supervisor_id',
+        'department_id',
     ];
 
     /**
@@ -93,5 +96,87 @@ class User extends Authenticatable
     public function getPrimaryRole(): string
     {
         return $this->roles()->first()?->name ?? 'student';
+    }
+
+    /**
+     * Check if user is active
+     */
+    public function isActive(): bool
+    {
+        return $this->status === 'active';
+    }
+
+    /**
+     * Check if user is paused
+     */
+    public function isPaused(): bool
+    {
+        return $this->status === 'paused';
+    }
+
+    /**
+     * Pause the user account
+     */
+    public function pause(): bool
+    {
+        return $this->update(['status' => 'paused']);
+    }
+
+    /**
+     * Activate the user account
+     */
+    public function activate(): bool
+    {
+        return $this->update(['status' => 'active']);
+    }
+
+    /**
+     * Scope to filter active users
+     */
+    public function scopeActive($query)
+    {
+        return $query->where('status', 'active');
+    }
+
+    /**
+     * Scope to filter paused users
+     */
+    public function scopePaused($query)
+    {
+        return $query->where('status', 'paused');
+    }
+
+    /**
+     * Get the department this user belongs to
+     */
+    public function department()
+    {
+        return $this->belongsTo(Department::class);
+    }
+
+    /**
+     * Get the supervisor that supervises this student
+     */
+    public function supervisor()
+    {
+        return $this->belongsTo(User::class, 'supervisor_id');
+    }
+
+    /**
+     * Get the students supervised by this supervisor
+     */
+    public function students()
+    {
+        return $this->hasMany(User::class, 'supervisor_id');
+    }
+
+    /**
+     * Scope to filter supervisors only
+     */
+    public function scopeSupervisors($query)
+    {
+        return $query->whereHas('roles', function ($q) {
+            $q->where('name', 'supervisor');
+        });
     }
 }

@@ -60,6 +60,10 @@ Route::middleware(['auth'])->group(function () {
 });
 
 // Admin routes
-Route::middleware(['auth', 'permission:role.view'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'role:superadmin'])->prefix('admin')->name('admin.')->group(function () {
     Volt::route('roles', 'admin.role-management')->name('roles');
+    Volt::route('accounts', 'admin.account-management')->name('accounts');
+    Volt::route('supervisors', 'admin.supervisor-management')->name('supervisors');
+    Volt::route('departments', 'admin.department-management')->name('departments');
+    Volt::route('departments/{id}', 'admin.department-detail')->name('department.detail');
 });

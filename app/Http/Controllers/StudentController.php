@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Department;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -27,7 +28,8 @@ class StudentController extends Controller
             }
         }
 
-        return view('auth.student-register');
+        $departments = Department::active()->orderBy('name')->get();
+        return view('auth.student-register', compact('departments'));
     }
 
     /**
@@ -58,6 +60,7 @@ class StudentController extends Controller
                 'regex:/^[a-zA-Z]+\.[0-9]+@bouesti\.edu\.ng$/'
             ],
             'password' => ['required', 'confirmed', Password::defaults()],
+            'department_id' => ['required', 'exists:departments,id'],
         ]);
 
         if ($validator->fails()) {
@@ -75,6 +78,7 @@ class StudentController extends Controller
             'email' => $request->email,
             'matric_no' => $matric_no,
             'password' => Hash::make($request->password),
+            'department_id' => $request->department_id,
         ]);
 
         // Assign student role
